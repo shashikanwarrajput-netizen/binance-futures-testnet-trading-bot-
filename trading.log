@@ -1,0 +1,11 @@
+2026-07-21 18:52:34,522 [INFO] Sending order request: {'symbol': 'BTCUSDT', 'side': 'SELL', 'type': 'LIMIT', 'quantity': 44444.0, 'price': 3333.0, 'timeInForce': 'GTC'}
+2026-07-21 18:52:34,831 [ERROR] Binance API error: APIError(code=-2014): API-key format invalid.
+2026-07-21 19:38:53,644 [INFO] Sending order request: {'symbol': 'BTCUSDT', 'side': 'SELL', 'type': 'LIMIT', 'quantity': 445345.0, 'price': 34545435.0, 'timeInForce': 'GTC'}
+2026-07-21 19:38:55,384 [ERROR] Binance API error: APIError(code=-2014): API-key format invalid.
+2026-07-21 20:16:14,930 [INFO] trading_bot - Dashboard order submission: symbol=BTCUSDT, side=BUY, type=MARKET, quantity=33337, price=[REDACTED]
+2026-07-21 20:16:15,257 [WARNING] trading_bot - Price must not be provided for MARKET orders.
+2026-07-21 20:16:15,257 [WARNING] trading_bot - Trading bot error: Price must not be provided for MARKET orders.
+2026-07-21 20:30:26,583 [INFO] trading_bot - Dashboard order submission: symbol=BTCUSDT, side=BUY, type=MARKET, quantity=44334434343, price=[REDACTED]
+2026-07-21 20:30:27,042 [WARNING] trading_bot - Price must not be provided for MARKET orders.
+2026-07-21 20:30:27,043 [WARNING] trading_bot - Trading bot error: Price must not be provided for MARKET orders.
+2026-07-21 21:02:45,612 [INFO] trading_bot - Dashboard order submission: symbol=BTCUSDT, side=SELL, type=LIMIT, quantity=34000, price=[REDACTED]

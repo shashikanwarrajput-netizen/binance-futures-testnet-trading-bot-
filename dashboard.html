@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Trading Dashboard</title>
+    <style>
+      :root {
+        font-family: "Inter", "Segoe UI", sans-serif;
+        color-scheme: dark;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: radial-gradient(circle at top left, rgba(60, 30, 120, 0.28), transparent 22%),
+                    radial-gradient(circle at 85% 15%, rgba(180, 40, 120, 0.16), transparent 20%),
+                    radial-gradient(circle at 50% 95%, rgba(10, 140, 170, 0.12), transparent 18%),
+                    linear-gradient(180deg, #05030a 0%, #0d0720 100%);
+        color: #e8eefc;
+      }
+
+      .page {
+        width: min(1220px, 96vw);
+        margin: 1.5rem auto 2rem;
+        display: grid;
+        gap: 1.5rem;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.4rem 1.75rem;
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(18px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+      }
+
+      .brand-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ff5ac4, #7b55ff);
+        box-shadow: 0 0 18px rgba(255, 90, 196, 0.28);
+      }
+
+      .brand h1 {
+        margin: 0;
+        font-size: 1.2rem;
+        letter-spacing: 0.04em;
+      }
+
+      .topbar p,
+      .topbar a {
+        margin: 0;
+        color: #b8b4dc;
+      }
+
+      .topbar a {
+        text-decoration: none;
+        padding: 0.75rem 1rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.05);
+        transition: transform 0.2s ease, background 0.2s ease;
+      }
+
+      .topbar a:hover {
+        transform: translateY(-1px);
+        background: rgba(255, 255, 255, 0.09);
+      }
+
+      .hero {
+        display: grid;
+        gap: 1rem;
+        padding: 1.75rem;
+        border-radius: 32px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 20% 20%, rgba(255, 90, 196, 0.12), transparent 25%),
+                    radial-gradient(circle at 80% 80%, rgba(55, 196, 255, 0.1), transparent 22%);
+        pointer-events: none;
+      }
+
+      .hero h1 {
+        margin: 0;
+        font-size: clamp(2rem, 3vw, 3rem);
+        letter-spacing: -0.04em;
+        position: relative;
+        z-index: 1;
+      }
+
+      .hero p {
+        margin: 0;
+        color: #c7c2ee;
+        max-width: 64rem;
+        line-height: 1.75;
+        position: relative;
+        z-index: 1;
+      }
+
+      .hero-row {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+        margin-top: 1.5rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      .hero-stat {
+        padding: 1.15rem 1.35rem;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(10px);
+      }
+
+      .hero-stat span {
+        display: block;
+      }
+
+      .hero-stat .label {
+        color: #9b93c7;
+        font-size: 0.95rem;
+      }
+
+      .hero-stat .value {
+        margin-top: 0.6rem;
+        font-size: 1.4rem;
+        font-weight: 700;
+      }
+
+      .error-banner {
+        padding: 1rem 1.2rem;
+        border-radius: 24px;
+        background: rgba(255, 88, 146, 0.12);
+        color: #ffbdd6;
+        border: 1px solid rgba(255, 88, 146, 0.22);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1.8fr 1fr;
+        gap: 1.5rem;
+      }
+
+      .card {
+        border-radius: 32px;
+        background: rgba(18, 14, 36, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        box-shadow: 0 28px 70px rgba(8, 6, 20, 0.6);
+        padding: 1.75rem;
+        backdrop-filter: blur(12px) saturate(120%);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.05));
+        pointer-events: none;
+      }
+
+      .chart-card {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .chart-hero {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at top left, rgba(255, 90, 196, 0.12), transparent 20%),
+                    radial-gradient(circle at bottom right, rgba(57, 196, 255, 0.08), transparent 22%);
+        pointer-events: none;
+      }
+
+      .chart-background {
+        position: absolute;
+        inset: 0;
+        opacity: 0.14;
+        background-image:
+          radial-gradient(circle at 10% 15%, rgba(255, 255, 255, 0.7) 0.75px, transparent 0.75px),
+          radial-gradient(circle at 90% 50%, rgba(255, 255, 255, 0.7) 0.75px, transparent 0.75px);
+        background-size: 80px 80px;
+      }
+
+      .blockchain-effect {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+
+      .blockchain-effect span {
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.8);
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.25);
+      }
+
+      .chart-header {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .chart-header h2 {
+        margin: 0;
+      }
+
+      .label-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.65rem 1rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #f5f3ff;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 0.95rem;
+      }
+
+      .chart-height {
+        min-height: 340px;
+        position: relative;
+        z-index: 2;
+      }
+
+      .signal-row {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.9rem;
+        margin-top: 1rem;
+        position: relative;
+        z-index: 2;
+      }
+
+      .signal-card {
+        padding: 1rem 1.1rem;
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .signal-label {
+        color: #b8b3dd;
+      }
+
+      .signal-value {
+        display: block;
+        margin-top: 0.5rem;
+        font-size: 1.2rem;
+        font-weight: 700;
+      }
+
+      .form-grid {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .form-group {
+        display: grid;
+        gap: 0.55rem;
+      }
+
+      label {
+        color: #c2bce3;
+        font-weight: 700;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 1rem 1.1rem;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(16, 12, 39, 0.88);
+        color: #eef3ff;
+        font-size: 1rem;
+      }
+
+      input::placeholder,
+      select option {
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: rgba(123, 87, 255, 0.9);
+        box-shadow: 0 0 0 4px rgba(123, 87, 255, 0.16);
+      }
+
+      .buttons {
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .primary-btn {
+        border: none;
+        border-radius: 999px;
+        padding: 1rem 1.6rem;
+        color: #ffffff;
+        background: linear-gradient(135deg, #8c65ff, #ff5ac4);
+        cursor: pointer;
+        font-weight: 700;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .primary-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 24px 40px rgba(140, 101, 255, 0.28);
+      }
+
+      .summary {
+        display: grid;
+        gap: 0.9rem;
+      }
+
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 1rem 1.15rem;
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .summary-label {
+        color: #b8b3dd;
+      }
+
+      .summary-value {
+        font-weight: 700;
+        color: #fff;
+      }
+
+      .footer-note {
+        margin-top: 1rem;
+        color: #a6a1cd;
+        font-size: 0.95rem;
+      }
+
+      @media (max-width: 950px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .signal-row {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 620px) {
+        .topbar,
+        .card,
+        .hero {
+          padding: 1.25rem;
+        }
+
+        .hero-row {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  </head>
+  <body>
+    <div class="page">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-dot"></span>
+          <div>
+            <h1>TradeFlow</h1>
+            <p>Binance Futures Testnet dashboard</p>
+          </div>
+        </div>
+        <a href="/logout">Sign out</a>
+      </header>
+
+      <section class="hero card">
+        <div>
+          <h1>Live Trading Intelligence</h1>
+          <p>Dive into a responsive dashboard with blockchain-inspired motion, vibrant gradients, and a real-time price feed for fast order execution.</p>
+        </div>
+
+        <div class="hero-row">
+          <div class="hero-stat">
+            <span class="label">Order type</span>
+            <span class="value">MARKET / LIMIT</span>
+          </div>
+          <div class="hero-stat">
+            <span class="label">Supported sides</span>
+            <span class="value">BUY / SELL</span>
+          </div>
+          <div class="hero-stat">
+            <span class="label">API mode</span>
+            <span class="value">Testnet only</span>
+          </div>
+        </div>
+      </section>
+
+      {% if messages %}
+        <div class="error-banner">
+          {% for message in messages %}
+            <p>{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <section class="card chart-card">
+        <div class="chart-background"></div>
+        <div class="chart-hero"></div>
+        <div class="blockchain-effect">
+          <span style="top: 14%; left: 12%;"></span>
+          <span style="top: 22%; left: 72%;"></span>
+          <span style="top: 54%; left: 28%;"></span>
+          <span style="top: 66%; left: 84%;"></span>
+          <span style="top: 82%; left: 44%;"></span>
+        </div>
+
+        <div class="chart-header">
+          <div>
+            <h2>Market Pulse</h2>
+            <p style="margin: 0.5rem 0 0; color: #cec7f2;">Simulated real-time price action with glowing blockchain nodes and a live market chart.</p>
+          </div>
+          <span class="label-pill">Live feed</span>
+        </div>
+
+        <div class="chart-height">
+          <canvas id="marketChart"></canvas>
+        </div>
+
+        <div class="signal-row">
+          <div class="signal-card">
+            <span class="signal-label">24h momentum</span>
+            <span class="signal-value" id="momentumValue">+3.8%</span>
+          </div>
+          <div class="signal-card">
+            <span class="signal-label">Active nodes</span>
+            <span class="signal-value">18</span>
+          </div>
+          <div class="signal-card">
+            <span class="signal-label">Network latency</span>
+            <span class="signal-value">52 ms</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="grid">
+        <section class="card">
+          <h2>Place an Order</h2>
+          <form method="post" class="form-grid">
+            <div class="form-group">
+              <label for="symbol">Symbol</label>
+              <input id="symbol" name="symbol" value="BTCUSDT" required />
+            </div>
+            <div class="form-group">
+              <label for="side">Side</label>
+              <select id="side" name="side" required>
+                <option>BUY</option>
+                <option>SELL</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="type">Order Type</label>
+              <select id="type" name="type" required>
+                <option>MARKET</option>
+                <option>LIMIT</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="quantity">Quantity</label>
+              <input id="quantity" name="quantity" type="number" step="any" required />
+            </div>
+            <div class="form-group">
+              <label for="price">Price (LIMIT only)</label>
+              <input id="price" name="price" type="number" step="any" />
+            </div>
+            <div class="buttons">
+              <button type="submit" class="primary-btn">Send Order</button>
+            </div>
+          </form>
+          <p class="footer-note">Order activity updates the dashboard and highlights the latest market move.</p>
+        </section>
+
+        <section class="status-card">
+          <h2>Order Summary</h2>
+          {% if order_response %}
+            <div class="summary">
+              <div class="summary-row">
+                <span class="summary-label">Symbol</span>
+                <span class="summary-value">{{ order_response.symbol }}</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">Side</span>
+                <span class="summary-value">{{ order_response.side }}</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">Type</span>
+                <span class="summary-value">{{ order_response.type }}</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">Order ID</span>
+                <span class="summary-value">{{ order_response.orderId }}</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">Status</span>
+                <span class="summary-value">{{ order_response.status }}</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">Executed Qty</span>
+                <span class="summary-value">{{ order_response.executedQty }}</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">Average Price</span>
+                <span class="summary-value">{{ order_response.avgPrice }}</span>
+              </div>
+            </div>
+          {% else %}
+            <p class="status-label">Submit an order to see the confirmation details here.</p>
+          {% endif %}
+        </section>
+      </div>
+    </div>
+
+    <script>
+      const orderData = {{ order_response|tojson | default('null') }};
+      const chartLabels = [];
+      const chartData = [];
+      let currentPrice = 63240;
+      const baseTime = new Date();
+
+      function formatLabel(date) {
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      }
+
+      for (let i = 10; i >= 0; i -= 1) {
+        const time = new Date(baseTime.getTime() - i * 60000);
+        const variation = (Math.random() - 0.5) * 80;
+        currentPrice = Math.max(1000, currentPrice + variation);
+        chartLabels.push(formatLabel(time));
+        chartData.push(parseFloat(currentPrice.toFixed(2)));
+      }
+
+      const canvas = document.getElementById('marketChart');
+      const ctx = canvas.getContext('2d');
+
+      const marketChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: chartLabels,
+          datasets: [{
+            label: 'BTC/USDT',
+            data: chartData,
+            // initial color (will update dynamically on ticks)
+            borderColor: 'rgba(0,200,120,0.95)',
+            backgroundColor: 'rgba(0,200,120,0.12)',
+            pointRadius: 0,
+            fill: true,
+            tension: 0.34,
+            borderWidth: 3,
+            segment: {
+              // color each segment green when price rises, red when it falls
+              borderColor: ctx => ctx.p0.parsed.y > ctx.p1.parsed.y ? 'rgba(255,60,80,0.95)' : 'rgba(0,200,120,0.95)'
+            }
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            intersect: false,
+            mode: 'index'
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(20, 14, 51, 0.95)',
+              titleColor: '#fff',
+              bodyColor: '#f2f0ff',
+              borderColor: 'rgba(255,255,255,0.12)',
+              borderWidth: 1,
+            }
+          },
+          scales: {
+            x: {
+              grid: {
+                color: 'rgba(255,255,255,0.08)'
+              },
+              ticks: {
+                color: '#b8b4dc'
+              }
+            },
+            y: {
+              grid: {
+                color: 'rgba(255,255,255,0.08)'
+              },
+              ticks: {
+                color: '#b8b4dc'
+              }
+            }
+          }
+        }
+      });
+
+      // Use Server-Sent Events to get live price ticks from the server
+      const es = new EventSource('/stream');
+      es.onmessage = (event) => {
+        try {
+          const payload = JSON.parse(event.data);
+          const nextTime = new Date();
+          currentPrice = payload.price;
+
+          chartData.push(parseFloat(currentPrice.toFixed(2)));
+          chartLabels.push(formatLabel(nextTime));
+
+          if (chartData.length > 12) {
+            chartData.shift();
+            chartLabels.shift();
+          }
+
+          // color the dataset based on last move (green up, red down)
+          const ds = marketChart.data.datasets[0];
+          const last = ds.data.length - 1;
+          const prev = ds.data[last - 1] ?? ds.data[last];
+          const up = ds.data[last] >= prev;
+          ds.borderColor = up ? 'rgba(0,200,120,0.95)' : 'rgba(255,60,80,0.95)';
+          ds.backgroundColor = up ? 'rgba(0,200,120,0.12)' : 'rgba(255,60,80,0.12)';
+
+          marketChart.update();
+
+          const momentum = ((ds.data[ds.data.length - 1] - ds.data[0]) / ds.data[0]) * 100;
+          document.getElementById('momentumValue').textContent = `${momentum >= 0 ? '+' : ''}${momentum.toFixed(2)}%`;
+        } catch (err) {
+          // ignore parse errors
+          console.warn('SSE parse error', err);
+        }
+      };
+
+      es.onerror = (err) => {
+        console.warn('EventSource failed, falling back to local updates', err);
+        // if SSE fails, fallback to client-side simulation
+        setInterval(() => {
+          const nextTime = new Date();
+          const delta = (Math.random() - 0.47) * 120;
+          currentPrice = Math.max(1000, currentPrice + delta);
+
+          chartData.push(parseFloat(currentPrice.toFixed(2)));
+          chartLabels.push(formatLabel(nextTime));
+
+          if (chartData.length > 12) {
+            chartData.shift();
+            chartLabels.shift();
+          }
+
+          marketChart.update();
+
+          const momentum = ((chartData[chartData.length - 1] - chartData[0]) / chartData[0]) * 100;
+          document.getElementById('momentumValue').textContent = `${momentum >= 0 ? '+' : ''}${momentum.toFixed(2)}%`;
+        }, 2200);
+      };
+
+      // If an order was just placed, pin the last point to the executed average price
+      if (orderData && orderData.avgPrice) {
+        const orderPrice = parseFloat(orderData.avgPrice);
+        currentPrice = orderPrice;
+        chartData[chartData.length - 1] = orderPrice;
+        marketChart.update();
+      }
+    </script>
+  </body>
+</html>

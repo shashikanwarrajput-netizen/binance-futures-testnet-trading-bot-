@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Trading Bot</title>
+    <style>
+      body { font-family: Arial, sans-serif; max-width: 720px; margin: 2rem auto; }
+      .card { border: 1px solid #ddd; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+      .error { color: #b00020; }
+      .success { color: #1b5e20; }
+      label { display: block; margin-top: 1rem; }
+      input, select { width: 100%; padding: 0.75rem; margin-top: 0.25rem; }
+      button { margin-top: 1rem; padding: 0.75rem 1rem; }
+    </style>
+  </head>
+  <body>
+    <h1>Binance Futures Testnet Trading Bot</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="card error">
+          {% for category, message in messages %}
+            <p>{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="card">
+      <form method="post">
+        <label>Symbol
+          <input name="symbol" value="BTCUSDT" required />
+        </label>
+        <label>Side
+          <select name="side" required>
+            <option>BUY</option>
+            <option>SELL</option>
+          </select>
+        </label>
+        <label>Type
+          <select name="type" required>
+            <option>MARKET</option>
+            <option>LIMIT</option>
+          </select>
+        </label>
+        <label>Quantity
+          <input name="quantity" type="number" step="any" required />
+        </label>
+        <label>Price (required for LIMIT)
+          <input name="price" type="number" step="any" />
+        </label>
+        <button type="submit">Submit Order</button>
+      </form>
+    </div>
+
+    {% if order_response %}
+      <div class="card success">
+        <h2>Order Summary</h2>
+        <p>Symbol: {{ order_response.symbol }}</p>
+        <p>Side: {{ order_response.side }}</p>
+        <p>Type: {{ order_response.type }}</p>
+        <p>Order ID: {{ order_response.orderId }}</p>
+        <p>Status: {{ order_response.status }}</p>
+        <p>Executed Quantity: {{ order_response.executedQty }}</p>
+        <p>Average Price: {{ order_response.avgPrice }}</p>
+      </div>
+    {% endif %}
+  </body>
+</html>

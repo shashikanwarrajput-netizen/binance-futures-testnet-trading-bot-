@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Trading Bot Login</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: "Inter", "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: radial-gradient(circle at 20% 20%, rgba(123, 87, 255, 0.22), transparent 28%),
+                    radial-gradient(circle at 80% 10%, rgba(255, 107, 189, 0.22), transparent 26%),
+                    radial-gradient(circle at 85% 85%, rgba(24, 209, 204, 0.18), transparent 24%),
+                    linear-gradient(180deg, #120f2a 0%, #1f163f 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+      }
+
+      .login-shell {
+        width: min(440px, 100%);
+        background: rgba(20, 14, 51, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 32px;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+        position: relative;
+        overflow: hidden;
+        padding: 2.5rem;
+      }
+
+      .login-shell::before,
+      .login-shell::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(60px);
+      }
+
+      .login-shell::before {
+        width: 260px;
+        height: 260px;
+        background: rgba(255, 107, 189, 0.45);
+        top: -80px;
+        right: -80px;
+      }
+
+      .login-shell::after {
+        width: 200px;
+        height: 200px;
+        background: rgba(24, 209, 204, 0.35);
+        bottom: -70px;
+        left: -70px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .brand-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ff6bcc, #7d5aff);
+        box-shadow: 0 0 20px rgba(255, 107, 189, 0.35);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2rem, 2.5vw, 2.75rem);
+        color: #ffffff;
+      }
+
+      .subtext {
+        margin: 0.75rem 0 2rem;
+        color: #c9c0eb;
+        line-height: 1.7;
+      }
+
+      .form-group {
+        display: grid;
+        gap: 0.5rem;
+        margin-top: 1rem;
+      }
+
+      label {
+        color: #b9aed8;
+        font-size: 0.95rem;
+        font-weight: 600;
+      }
+
+      input {
+        width: 100%;
+        border-radius: 18px;
+        padding: 1rem 1.1rem;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.06);
+        color: #ffffff;
+        font-size: 1rem;
+        transition: border-color 0.2s ease, transform 0.2s ease;
+      }
+
+      input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      input:focus {
+        border-color: rgba(123, 87, 255, 0.8);
+        transform: translateY(-1px);
+        outline: none;
+      }
+
+      button {
+        width: 100%;
+        margin-top: 1.75rem;
+        padding: 1.05rem;
+        border: none;
+        border-radius: 999px;
+        font-size: 1rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #9e67ff, #ff5ac4);
+        color: #ffffff;
+        cursor: pointer;
+        box-shadow: 0 18px 40px rgba(158, 103, 255, 0.28);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 22px 48px rgba(158, 103, 255, 0.36);
+      }
+
+      .help-text {
+        margin-top: 1.25rem;
+        color: #9d8fe4;
+        font-size: 0.95rem;
+      }
+
+      .alert {
+        margin-bottom: 1rem;
+        padding: 1rem 1.1rem;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 107, 189, 0.2);
+        color: #ffe3f2;
+      }
+
+      .alert p {
+        margin: 0;
+      }
+
+      @media (max-width: 520px) {
+        .login-shell {
+          padding: 1.75rem;
+          border-radius: 26px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-shell">
+      <div class="brand">
+        <span class="brand-dot"></span>
+        <span>Binance Futures Bot</span>
+      </div>
+      <h1>Welcome Back</h1>
+      <p class="subtext">Sign in to place Binance Futures testnet orders securely with a vibrant trading dashboard.</p>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="alert">
+            {% for category, message in messages %}
+              <p>{{ message }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <form method="post">
+        <div class="form-group">
+          <label>Email address</label>
+          <input type="email" name="email" placeholder="you@example.com" required />
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" name="password" placeholder="Enter password" required />
+        </div>
+
+        <button type="submit">Continue</button>
+      </form>
+      <p class="help-text">Use any email and a password with 6+ characters for demo access.</p>
+    </div>
+  </body>
+</html>
